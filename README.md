@@ -7,5 +7,5 @@
 
 ```javascript
 var m_pallete = new palette();
-m_Pallete.init_palette("div_id", palettejson);
+m_pallete.init_palette("div_id", palettejson);
 ```
