@@ -3,7 +3,7 @@
  */
 
 
- function Palette() {
+function Palette() {
     var self = this;
     //总体DIV
     self.target_div = "";
@@ -196,7 +196,7 @@
         }
 
         var m_detailHtml = init_detail();
-        var TotalInner = palette_Html + m_detailHtml;
+        var TotalInner = palette_Html + m_detailHtml + "</div>";
         //内容赋值入 html
         self.target_div.innerHTML = TotalInner;
 
@@ -244,7 +244,7 @@
      * @returns {string}
      */
     var init_single = function () {
-        var m_inner = '<div id="Show_Color_plate" style="width: 100%">';
+        var m_inner = '<div id="Show_Color_plate" style="width: 100%;height: 100%;overflow: hidden;">';
         //根据当前的singleNum 进行显示
         if (self.single_Num > 0) {
             // m_inner = '<div id="Show_Color_plate">';
@@ -255,19 +255,18 @@
                 var m_single_data_i_color_rgb = "rgb(" + m_single_data_i_color[0] + "," +
                     m_single_data_i_color[1] + "," + m_single_data_i_color[2] + ")";
                 var m_single_data_i_title = m_single_data_i[2];
-                var m_singleMember = '<div>'
-                    + '<canvas style="width: 20px; height: 20px; float: left; border:1px solid #404040;margin: 2px;'
+                var m_singleMember = '<canvas style="width: 20px; height: 20px; position: relative;  '
+                    + ' border:1px solid #404040;margin: 2px; float:left;'
                     + 'background-color: ' + m_single_data_i_color_rgb + ';"'
                     + 'title="' + m_single_data_i_title + '"'
-                    + 'class="single_canvas_' + self.target_div_ID + '"></canvas>'
-                    + '</div>';
+                    + 'id="single_canvas_' + i + '"'
+                    + 'class="single_canvas_' + self.target_div_ID + '"></canvas>';
+
                 m_inner = m_inner + m_singleMember;
             }
-            /*  'onmouseout="canvasMouseOut(event)"' +
-             'onmouseover="canvasMouseOver(event)"' +
-             'onmousemove="canvasMouseMove(event)"' +*/
+
         }
-        m_inner = m_inner + '</div>';
+        //   m_inner = m_inner + '</div>';
         return m_inner;
     };
 
@@ -284,15 +283,15 @@
     //single canvas 鼠标进入
     var single_canvasMouseOver = function (event) {
         var m_event = event.currentTarget;
-        var csstext = m_event.style.cssText;
+        var backgroundColor = m_event.style.backgroundColor;
         var title = m_event.title;
         var Show_Color_detail_canvas = document.getElementById(self.detail_canvas_id);
-        Show_Color_detail_canvas.style.cssText = csstext;
+        Show_Color_detail_canvas.style.backgroundColor = backgroundColor;
         var Show_Color_detail_a = document.getElementById(self.detail_a_id);
         Show_Color_detail_a.innerHTML = title;
-     $("#" + self.detail_id).css({"top": (event.clientY - 10) + "px", "left": (event.clientX + 20) + "px"}).show();
-       // var Show_Color_detail = document.getElementById(self.detail_id);
-       // Show_Color_detail.style.display = "block";
+        //显示部分
+        var Show_Color_detail = document.getElementById(self.detail_id);
+        Show_Color_detail.style.display = "block";
     };
 
     //single canvas 鼠标移出
@@ -303,7 +302,23 @@
 
     //single canvas 鼠标移动
     var single_canvasMouseMove = function (event) {
-      $("#" + self.detail_id).css({"top": (event.clientY - 10) + "px", "left": (event.clientX + 20) + "px"}).show();
+        // var canvas = document.getElementById(self.target_div);
+        var m_MaxWidth = $("#" + self.target_div_ID).width();
+        var max = event.offsetX + event.currentTarget.offsetLeft + 10 + 100;
+        if (event.offsetX + event.currentTarget.offsetLeft + 10 + 100 < m_MaxWidth) {
+            //设置位置
+            $("#" + self.detail_id).css({
+                "top": (event.currentTarget.offsetTop - 5) + "px",
+                "left": (event.offsetX + event.currentTarget.offsetLeft + 10) + "px"
+            });
+        }
+        else {
+            //设置位置
+            $("#" + self.detail_id).css({
+                "top": (event.currentTarget.offsetTop - 5) + "px",
+                "left": (event.offsetX + event.currentTarget.offsetLeft - 10 - 100) + "px"
+            });
+        }
     };
 
 
@@ -319,10 +334,10 @@
         var m_inner = "<div id='" + self.gradient_id + "'>"
             + "<canvas style='width: 100%;height:10px;border:1px solid #404040;' id='" + self.gradient_canvas_id + "' title=''> "
             + "</canvas>"
-            + "<div style='width:100%;height: 12px; font-size: 8px;'>"
-            + "<a style='float: left;'>" + gradient_Min.toFixed(2) + "</a>"
-            + "<a style='float: right;'>" + gradient_Max.toFixed(2) + "</a>"
-            + "</div>"
+            + "<div style='width:100%;height: 12px; margin-top:-5px;font-size: 8px;'>"
+            + "<p style='float: left;'>" + gradient_Min.toFixed(2) + "</p>"
+            + "<p style='float: right;'>" + gradient_Max.toFixed(2) + "</p>"
+                //  + "</div>"
             + "</div>";
         return m_inner;
     };
@@ -360,19 +375,36 @@
     var gradient_canvasMouseMove = function (event) {
         //计算title详情
         var canvas = document.getElementById(self.gradient_canvas_id);
-        var m_MaxWidth = canvas.width;
-        canvas.title = ( gradient_Min + ((gradient_Max - gradient_Min) / m_MaxWidth * event.clientX)).toFixed(2);
+        var m_MaxWidth = $("#" + self.target_div_ID).width();
+        var rect = canvas.getBoundingClientRect();
+        var relative_x = event.clientX - rect.left;
+        canvas.title = ( gradient_Min + ((gradient_Max - gradient_Min) / m_MaxWidth * relative_x)).toFixed(2);
         canvas.style.cursor = "crosshair";
         //获取鼠标当前点
         var context = canvas.getContext("2d");
-        var imagedata = context.getImageData(event.clientX, 2, 1, 1);
+        var imagedata = context.getImageData(relative_x, 5, 1, 1);
         var m_rgb = "rgb(" + imagedata.data[0] + "," + imagedata.data[1] + "," + imagedata.data[2] + ")";
         //详情中canvas 颜色 显示部分
         var Show_Color_detail_canvas = document.getElementById(self.detail_canvas_id);
         Show_Color_detail_canvas.style.background = m_rgb;
         //详情中文字部分
         var Show_Color_detail_a = document.getElementById(self.detail_a_id);
-        Show_Color_detail_a.innerHTML = (gradient_Min + ((gradient_Max - gradient_Min) / m_MaxWidth * event.clientX)).toFixed(2);
+        Show_Color_detail_a.innerHTML = ( gradient_Min + ((gradient_Max - gradient_Min) / m_MaxWidth * relative_x)).toFixed(2);
+
+        if (event.offsetX + event.currentTarget.offsetLeft + 10 + 100 < m_MaxWidth) {
+            //设置位置
+            $("#" + self.detail_id).css({
+                "top": (event.currentTarget.offsetTop - 5) + "px",
+                "left": (event.offsetX + event.currentTarget.offsetLeft + 10) + "px"
+            });
+        }
+        else {
+            //设置位置
+            $("#" + self.detail_id).css({
+                "top": (event.currentTarget.offsetTop - 5) + "px",
+                "left": (event.offsetX + event.currentTarget.offsetLeft - 10 - 100) + "px"
+            });
+        }
     };
 
     /**
@@ -444,7 +476,7 @@
                 m_inner = m_inner + m_singleMember;
             }
         }
-        m_inner = m_inner + '</div>';
+        // m_inner = m_inner + '</div>';
         return m_inner;
     };
 
@@ -470,12 +502,12 @@
         //详情部分初始化不显示
         var m_inner = ' <!--悬浮显示部分DIV -->'
             + '<div id="' + self.detail_id + '"'
-            + 'style="background-color: white; width: 120px;height: 30px; position:absolute; border: 1px solid #7d7d7d;'
+            + 'style="background-color: white; width: 100px;height: 25px; position:absolute; border: 1px solid #7d7d7d;'
             + 'display:none;">'
-            + '<canvas style="width: 22px;height: 22px; float: left;background-color: #ffce27;margin: 4px;"'
+            + '<canvas style="width: 19px;height: 19px;float: left;background-color: #ffffff;margin: 2px;"'
             + 'id="' + self.detail_canvas_id + '">'
             + '</canvas>'
-            + '<a id="' + self.detail_a_id + '" style="height: 30px;line-height: 30px;">200 - 230</a>'
+            + '<p id="' + self.detail_a_id + '"style="height: 25px;line-height: 25px;color:#000000;float:left;"> </p>'
             + '</div>';
         return m_inner;
     };
