@@ -52,6 +52,7 @@ function Palette() {
         switch (self.m_BeginJson.palette_mode) {
             case "single":
             {
+
                 if (self.m_BeginJson.single == undefined) {
                     console.log("调色板控件json格式错误：single 不能为空。");
                     return false;
@@ -187,7 +188,7 @@ function Palette() {
             }
             case "range":
             {
-                //todo 添加分块调色板
+                //分块调色板初始化
                 palette_Html = init_range();
                 break;
             }
@@ -206,7 +207,7 @@ function Palette() {
         switch (self.palette_Mode) {
             case "single":
             {
-                //todo 初始化 single 事件
+                //初始化 single 事件
                 init_single_func();
                 break;
             }
@@ -224,8 +225,7 @@ function Palette() {
             }
             case "range":
             {
-                //todo 添加分块调色板
-                //  self.palette_Mode = "range";
+                //初始化范围调色板
                 try {
                     init_range_func();
                 } catch (e) {
@@ -395,7 +395,8 @@ function Palette() {
         Show_Color_detail_canvas.style.background = m_rgb;
         //详情中文字部分
         var Show_Color_detail_a = document.getElementById(self.detail_a_id);
-        Show_Color_detail_a.innerHTML = ( gradient_Min + ((gradient_Max - gradient_Min) / m_MaxWidth * relative_x)).toFixed(2) + self.unit;
+        var relative_x_title = (event.clientX - rect.left );
+        Show_Color_detail_a.innerHTML = ( gradient_Min + ((gradient_Max - gradient_Min) / m_MaxWidth * relative_x_title)).toFixed(2) + self.unit;
         if (event.offsetX + event.currentTarget.offsetLeft + 10 + 100 < m_MaxWidth) {
             //设置位置
             $("#" + self.detail_id).css({
@@ -464,12 +465,14 @@ function Palette() {
                 //title处理
                 var titlebein = m_range_data_i[0][0];
                 var titleend = m_range_data_i[0][1];
+                //空值转化
                 if (titlebein == null) {
                     titlebein = "";
                 }
                 if (titleend == null) {
                     titleend = "";
                 }
+                //设置title 内容
                 var m_range_data_i_title = titlebein + "~" + titleend;
 
                 m_range_data_i_title.replace("null", "--");
@@ -499,7 +502,6 @@ function Palette() {
                 + "<p style='float: right;'>" + m_rangemax + "</p>"
                 + "</div>";
         }
-
         m_inner = m_inner + '</div>';
         return m_inner;
     };
@@ -512,7 +514,6 @@ function Palette() {
             m_Canvas[i].onmouseout = single_canvasMouseOut;
             m_Canvas[i].onmousemove = single_canvasMouseMove;
         }
-
     };
 
     /**
