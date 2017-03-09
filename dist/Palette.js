@@ -290,8 +290,9 @@
         Show_Color_detail_canvas.style.cssText = csstext;
         var Show_Color_detail_a = document.getElementById(self.detail_a_id);
         Show_Color_detail_a.innerHTML = title;
-        var Show_Color_detail = document.getElementById(self.detail_id);
-        Show_Color_detail.style.display = "block";
+     $("#" + self.detail_id).css({"top": (event.pageY - 10) + "px", "left": (event.pageX + 20) + "px"}).show();
+       // var Show_Color_detail = document.getElementById(self.detail_id);
+       // Show_Color_detail.style.display = "block";
     };
 
     //single canvas 鼠标移出
@@ -302,6 +303,7 @@
 
     //single canvas 鼠标移动
     var single_canvasMouseMove = function (event) {
+      $("#" + self.detail_id).css({"top": (event.pageY - 10) + "px", "left": (event.pageX + 20) + "px"}).show();
     };
 
 
