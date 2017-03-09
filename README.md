@@ -6,6 +6,6 @@
 初始化方式
 
 ```javascript
-var m_pallete = new palette();
+var m_pallete = new Palette();
 m_pallete.init_palette("div_id", palettejson);
 ```
