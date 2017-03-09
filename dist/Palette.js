@@ -52,7 +52,6 @@ function Palette() {
         switch (self.m_BeginJson.palette_mode) {
             case "single":
             {
-
                 if (self.m_BeginJson.single == undefined) {
                     console.log("调色板控件json格式错误：single 不能为空。");
                     return false;
@@ -381,13 +380,16 @@ function Palette() {
         var canvas = document.getElementById(self.gradient_canvas_id);
         var m_MaxWidth = $("#" + self.target_div_ID).width();
         var rect = canvas.getBoundingClientRect();
-        var relative_x = event.clientX - rect.left;
-        canvas.title = ( gradient_Min + ((gradient_Max - gradient_Min) / m_MaxWidth * relative_x)).toFixed(2);
-        canvas.style.cursor = "crosshair";
+
+        // var relative_x = event.clientX - rect.left;
+        var relative_x = (event.clientX - rect.left ) * (canvas.width / rect.width);
+        //  canvas.title = (gradient_Min + ((gradient_Max - gradient_Min) / m_MaxWidth * relative_x)).toFixed(2);
+        canvas.style.cursor = "pointer";
         //获取鼠标当前点
         var context = canvas.getContext("2d");
-        var imagedata = context.getImageData(relative_x, 5, 1, 1);
+        var imagedata = context.getImageData(relative_x, 2, 1, 1);
         var m_rgb = "rgb(" + imagedata.data[0] + "," + imagedata.data[1] + "," + imagedata.data[2] + ")";
+
         //详情中canvas 颜色 显示部分
         var Show_Color_detail_canvas = document.getElementById(self.detail_canvas_id);
         Show_Color_detail_canvas.style.background = m_rgb;
