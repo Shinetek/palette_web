@@ -470,7 +470,7 @@
         //详情部分初始化不显示
         var m_inner = ' <!--悬浮显示部分DIV -->'
             + '<div id="' + self.detail_id + '"'
-            + 'style="width: 120px;height: 30px;margin-left: 295px; margin-top:-40px;float: left; border: 1px solid #7d7d7d;'
+            + 'style="background-color: white; width: 120px;height: 30px; position:absolute; border: 1px solid #7d7d7d;'
             + 'display:none;">'
             + '<canvas style="width: 22px;height: 22px; float: left;background-color: #ffce27;margin: 4px;"'
             + 'id="' + self.detail_canvas_id + '">'
