@@ -3,7 +3,7 @@
  */
 
 
-var palette = function () {
+ function Palette() {
     var self = this;
     //总体DIV
     self.target_div = "";
