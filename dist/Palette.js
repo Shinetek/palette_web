@@ -12,6 +12,8 @@ function Palette() {
     //渐变div 的ID
     //详情显示DIV
     self.m_BeginJson = {};
+    //调色板 数值单位
+    self.unit = "";
     //初始化函数
     this.init_palette = function (m_DivID, m_Json) {
         self.target_div_ID = m_DivID;
@@ -88,7 +90,9 @@ function Palette() {
      */
     var init_ShowMode = function () {
         //判断模式
-
+        if (self.m_BeginJson.unit != undefined) {
+            self.unit = self.m_BeginJson.unit;
+        }
         //根据模式 进行json初始化
         switch (self.m_BeginJson.palette_mode) {
             case "single":
@@ -288,7 +292,7 @@ function Palette() {
         var Show_Color_detail_canvas = document.getElementById(self.detail_canvas_id);
         Show_Color_detail_canvas.style.backgroundColor = backgroundColor;
         var Show_Color_detail_a = document.getElementById(self.detail_a_id);
-        Show_Color_detail_a.innerHTML = title;
+        Show_Color_detail_a.innerHTML = title + self.unit;
         //显示部分
         var Show_Color_detail = document.getElementById(self.detail_id);
         Show_Color_detail.style.display = "block";
@@ -389,8 +393,7 @@ function Palette() {
         Show_Color_detail_canvas.style.background = m_rgb;
         //详情中文字部分
         var Show_Color_detail_a = document.getElementById(self.detail_a_id);
-        Show_Color_detail_a.innerHTML = ( gradient_Min + ((gradient_Max - gradient_Min) / m_MaxWidth * relative_x)).toFixed(2);
-
+        Show_Color_detail_a.innerHTML = ( gradient_Min + ((gradient_Max - gradient_Min) / m_MaxWidth * relative_x)).toFixed(2) + self.unit;
         if (event.offsetX + event.currentTarget.offsetLeft + 10 + 100 < m_MaxWidth) {
             //设置位置
             $("#" + self.detail_id).css({
@@ -526,11 +529,11 @@ function Palette() {
             + '<canvas style="width: 19px;height: 19px;float: left;background-color: #ffffff;margin: 2px;"'
             + 'id="' + self.detail_canvas_id + '">'
             + '</canvas>'
-            + '<p id="' + self.detail_a_id + '"style="height: 25px;line-height: 25px;color:#000000;float:left;"> </p>'
+            + '<p id="' + self.detail_a_id + '"style="height: 25px;line-height: 25px;color:#000000;float:left;overflow:hidden;"> </p>'
             + '</div>';
         return m_inner;
     };
 }
-;
+
 
 
