@@ -440,12 +440,13 @@ function Palette() {
         //固定宽度16 若进度条十分窄，则使用计算的数值 进行初始化
         var m_width = 19;
         if (range_num > 0) {
+            m_width = (m_MaxWidth - 2) / range_num;
             if ((m_MaxWidth - 2) / range_num > 0 && (m_MaxWidth - 2) / range_num < m_width) {
                 m_width = (m_MaxWidth - 2) / range_num;
             }
         }
         //初始化html开头
-        var m_inner = '<div id="Show_Color_plate" style="width: 100%">';
+        var m_inner = '<div id="Show_Color_plate" style="width: 100%">' + '<div>';
         //根据当前的singleNum 进行显示
         if (range_num > 0) {
             for (var i = 0; i < range_num; i++) {
@@ -468,7 +469,7 @@ function Palette() {
 
                 m_range_data_i_title.replace("null", "--");
                 var m_singleMember = '<div>'
-                    + '<canvas style="width: ' + m_width + 'px; height: 22px; float: left; border:0px solid #404040;margin: 2px 0px;'
+                    + '<canvas style="width: ' + m_width + 'px; height: 14px; float: left; border:0px solid #404040;margin: 2px 0px;'
                     + 'background-color: ' + m_range_data_i_color_rgb + ';"'
                     + 'title="' + m_range_data_i_title + '"'
                     + 'class="range_canvas_' + self.target_div_ID + '"></canvas>'
@@ -476,11 +477,29 @@ function Palette() {
                 m_inner = m_inner + m_singleMember;
             }
         }
-        // m_inner = m_inner + '</div>';
+        //添加文字显示部分
+        if (range_num > 0) {
+            //获取最小值
+            var m_rangemin = range_data[0][0][0];
+            //获取最大值
+            var m_rangemax = range_data[range_data.length - 1][0][1];
+            if (m_rangemin == undefined || m_rangemin == null) {
+                m_rangemin = '<' + range_data[0][0][1];
+            }
+            if (m_rangemax == undefined || m_rangemax == null) {
+                m_rangemax = +range_data[range_data.length - 1][0][0] + '<';
+            }
+            m_inner = m_inner + "</div>" + "<div style='width:100%;height: 12px; margin-top:-6px;font-size: 8px;'>"
+                + "<p style='float: left;'>" + m_rangemin + "</p>"
+                + "<p style='float: right;'>" + m_rangemax + "</p>"
+                + "</div>";
+        }
+
+        m_inner = m_inner + '</div>';
         return m_inner;
     };
 
-    //初始化阶段函数列表
+//初始化阶段函数列表
     var init_range_func = function () {
         var m_Canvas = document.getElementsByClassName('range_canvas_' + self.target_div_ID);
         for (var i = 0; i < m_Canvas.length; i++) {
@@ -511,6 +530,7 @@ function Palette() {
             + '</div>';
         return m_inner;
     };
-};
+}
+;
 
 
